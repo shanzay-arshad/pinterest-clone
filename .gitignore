@@ -1,0 +1,17 @@
+
+# Environment variables and secrets
+.env
+
+# Python virtual environments
+.venv/
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Uploaded user images
+uploads/
+
+# Operating system files
+.DS_Store
