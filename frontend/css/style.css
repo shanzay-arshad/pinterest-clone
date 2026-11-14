@@ -1,0 +1,123 @@
+
+/* General page styling */
+body {
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    color: #222222;
+}
+
+/* Brand */
+.navbar-brand {
+    color: #e60023;
+    font-size: 22px;
+}
+
+.brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e60023;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+/* Search bar */
+.search-input {
+    background-color: #efefef;
+    border: none;
+    border-radius: 25px;
+    padding: 13px 20px;
+}
+
+.search-input:focus {
+    background-color: #efefef;
+    box-shadow: 0 0 0 2px #777777;
+}
+
+/* Upload button */
+#uploadBtn {
+    border-radius: 25px;
+    padding: 10px 22px;
+}
+
+/* Pinterest-style image grid */
+.pin-grid {
+    columns: 5 200px;
+    column-gap: 18px;
+}
+
+/* Individual image card */
+.pin-card {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 22px;
+    break-inside: avoid;
+}
+
+.pin-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.pin-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    transition: transform 0.3s ease;
+}
+
+.pin-card img:hover {
+    transform: scale(1.04);
+}
+
+.pin-card h6 {
+    margin-top: 10px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.pin-card p {
+    color: #777777;
+    font-size: 13px;
+}
+
+/* Save button */
+.save-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: #e60023;
+    color: white;
+    border: none;
+    border-radius: 22px;
+    padding: 9px 18px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.pin-image-wrapper:hover .save-btn {
+    opacity: 1;
+}
+
+.save-btn.saved {
+    background-color: #333333;
+}
+
+/* Smaller screens */
+@media (max-width: 768px) {
+    .pin-grid {
+        columns: 2 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pin-grid {
+        columns: 1;
+    }
+}
