@@ -1,7 +1,9 @@
 
 from fastapi import FastAPI
 
-# Create FastAPI application
+from app.routes.users import router as users_router
+
+
 app = FastAPI(
     title="Pinterest Clone API",
     description="Backend API for our Pinterest-inspired application",
@@ -9,7 +11,6 @@ app = FastAPI(
 )
 
 
-# Root endpoint
 @app.get("/")
 def home():
     return {
@@ -17,9 +18,13 @@ def home():
     }
 
 
-# Health check endpoint
 @app.get("/health")
 def health_check():
     return {
         "status": "healthy"
     }
+
+
+# Register users router
+app.include_router(users_router)
+
