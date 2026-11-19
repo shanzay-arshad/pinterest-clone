@@ -4,8 +4,15 @@ from sqlalchemy.orm import Session
 from pwdlib import PasswordHash
 
 from app.database import get_db
+from app.dependencies import get_current_user
 from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse
+from app.schemas.user import (
+    UserCreate,
+    UserResponse,
+    UserLogin,
+    Token
+)
+from app.services.auth import create_access_token
 
 
 router = APIRouter(
@@ -16,13 +23,17 @@ router = APIRouter(
 password_hash = PasswordHash.recommended()
 
 
+# -------------------------------
+# USER REGISTRATION
+# -------------------------------
+
 @router.post("/register", response_model=UserResponse)
 def register_user(
     user_data: UserCreate,
     db: Session = Depends(get_db)
 ):
 
-    # Check if username already exists
+    # Check whether username already exists
     existing_username = db.query(User).filter(
         User.username == user_data.username
     ).first()
@@ -33,7 +44,7 @@ def register_user(
             detail="Username already exists"
         )
 
-    # Check if email already exists
+    # Check whether email already exists
     existing_email = db.query(User).filter(
         User.email == user_data.email
     ).first()
@@ -56,9 +67,65 @@ def register_user(
         hashed_password=hashed_password
     )
 
-    # Save user in database
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
     return new_user
+
+
+# -------------------------------
+# USER LOGIN
+# -------------------------------
+
+@router.post("/login", response_model=Token)
+def login_user(
+    user_data: UserLogin,
+    db: Session = Depends(get_db)
+):
+
+    # Find user by email
+    user = db.query(User).filter(
+        User.email == user_data.email
+    ).first()
+
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    # Verify password
+    password_valid = password_hash.verify(
+        user_data.password,
+        user.hashed_password
+    )
+
+    if not password_valid:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    # Generate JWT access token
+    access_token = create_access_token(
+        data={"sub": str(user.id)}
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
+
+# -------------------------------
+# GET CURRENT USER PROFILE
+# -------------------------------
+
+@router.get("/me", response_model=UserResponse)
+def get_my_profile(
+    current_user: User = Depends(get_current_user)
+):
+
+    return current_user
+
