@@ -99,8 +99,7 @@ def create_pin(
 
 @router.get("/", response_model=list[PinResponse])
 def get_all_pins(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
     pins = (
         db.query(Pin)

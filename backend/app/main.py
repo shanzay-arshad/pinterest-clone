@@ -1,7 +1,9 @@
+
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.users import router as users_router
 from app.routes.pins import router as pins_router
@@ -11,6 +13,18 @@ app = FastAPI(
     title="Pinterest Clone API",
     description="Backend API for our Pinterest-inspired application",
     version="1.0.0"
+)
+
+# Allow our frontend to communicate with the backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5500",
+        "http://127.0.0.1:5500"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
 # Image storage directory

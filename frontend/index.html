@@ -73,82 +73,22 @@
             </p>
         </section>
 
+       
         <!-- Image Feed -->
-        <section class="pin-grid" id="pinGrid">
+<section class="pin-grid" id="pinGrid">
 
-            <article class="pin-card" data-title="nature mountains landscape">
-                <div class="pin-image-wrapper">
-                    <img
-                        src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=700"
-                        alt="Beautiful mountain landscape"
-                    >
-                    <button class="save-btn">Save</button>
-                </div>
-                <h6>Beautiful Mountain Views</h6>
-                <p>Nature and travel inspiration</p>
-            </article>
-
-            <article class="pin-card" data-title="interior home decoration">
-                <div class="pin-image-wrapper">
-                    <img
-                        src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=700"
-                        alt="Modern home interior"
-                    >
-                    <button class="save-btn">Save</button>
-                </div>
-                <h6>Modern Home Interior</h6>
-                <p>Home decoration ideas</p>
-            </article>
-
-            <article class="pin-card" data-title="flowers photography">
-                <div class="pin-image-wrapper">
-                    <img
-                        src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=700"
-                        alt="Beautiful flowers"
-                    >
-                    <button class="save-btn">Save</button>
-                </div>
-                <h6>Flower Photography</h6>
-                <p>Creative photography ideas</p>
-            </article>
-
-            <article class="pin-card" data-title="ocean beach travel">
-                <div class="pin-image-wrapper">
-                    <img
-                        src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=700"
-                        alt="Ocean waves"
-                    >
-                    <button class="save-btn">Save</button>
-                </div>
-                <h6>Ocean and Beach</h6>
-                <p>Travel inspiration</p>
-            </article>
-
-            <article class="pin-card" data-title="workspace desk study">
-                <div class="pin-image-wrapper">
-                    <img
-                        src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=700"
-                        alt="Computer workspace"
-                    >
-                    <button class="save-btn">Save</button>
-                </div>
-                <h6>Creative Workspace</h6>
-                <p>Desk setup inspiration</p>
-            </article>
-
-            <article class="pin-card" data-title="architecture buildings">
-                <div class="pin-image-wrapper">
-                    <img
-                        src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=700"
-                        alt="Modern architecture"
-                    >
-                    <button class="save-btn">Save</button>
-                </div>
-                <h6>Modern Architecture</h6>
-                <p>Architecture inspiration</p>
-            </article>
+    <!-- Pins will be loaded dynamically from FastAPI -->
 
         </section>
+
+        <p id="loadingMessage" class="text-center text-muted mt-4">
+            Loading ideas...
+        </p>
+
+        <p id="noResults" class="text-center text-muted mt-4 d-none">
+            No matching ideas found.
+        </p>
+        
 
         <p id="noResults" class="text-center text-muted mt-4 d-none">
             No matching ideas found.
