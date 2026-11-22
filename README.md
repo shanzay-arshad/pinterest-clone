@@ -1,24 +1,29 @@
 # Pinterest Clone
 
-I built this project as a way to practise full-stack web development and understand how a real-world image-sharing application works.
+A full-stack Pinterest-inspired image-sharing application built to practise and understand real-world web development.
 
-The idea was to create a platform inspired by Pinterest where users can create accounts, upload images, explore pins uploaded by other users, save pins they like, and view their own profiles.
+Users can create accounts, upload images, explore content shared by other users, save their favourite pins, and manage their own profiles.
 
-While working on this project, I got hands-on experience with frontend development, REST APIs, authentication, database management, and Docker.
+This project gave me practical experience building REST APIs, implementing authentication, connecting a frontend to a backend, managing a relational database, handling cloud image storage, and deploying a full-stack application.
+
+## Live Application
+
+- **Frontend:** https://pinterest-clone-shanzay.netlify.app
+- **Backend API:** https://pinterest-backend-orpin.vercel.app
+- **API Documentation:** https://pinterest-backend-orpin.vercel.app/docs
 
 ## Features
 
-Here are the features I have implemented so far:
-
-- **User Registration:** Users can create an account using a username, email, and password.
-- **User Login:** Registered users can log in securely.
-- **Authentication:** Passwords are hashed, and JWT tokens are used for authentication.
-- **Explore Feed:** Users can browse pins uploaded by different users.
-- **Upload Pins:** Logged-in users can upload images with a title and description.
-- **Save and Unsave Pins:** Users can save pins they like and remove them from their saved collection.
-- **Saved Pins:** Saved pins remain available after refreshing the page or logging out and logging back in.
-- **User Profiles:** Users can view their profile information and the pins they have uploaded.
-- **Image Storage:** Uploaded images are stored locally and managed through a Docker volume.
+- **User Registration:** Create an account using a username, email, and password.
+- **User Login:** Authenticate using registered credentials.
+- **Secure Authentication:** Password hashing and JWT-based authentication.
+- **Explore Feed:** Browse pins uploaded by different users.
+- **Upload Pins:** Upload images with titles and descriptions.
+- **Save and Unsave Pins:** Add pins to or remove them from a personal saved collection.
+- **Saved Pins:** Retrieve saved pins across sessions.
+- **User Profiles:** View profile information and uploaded pins.
+- **Cloud Image Storage:** Store uploaded images using Cloudinary.
+- **Persistent Database:** Store user accounts, pin information, and saved-pin records in PostgreSQL.
 
 ## Technologies Used
 
@@ -26,12 +31,43 @@ Here are the features I have implemented so far:
 |---|---|
 | Frontend | HTML, CSS, Bootstrap 5, JavaScript |
 | Backend | Python, FastAPI |
-| Database | PostgreSQL |
+| Database | PostgreSQL, Neon |
 | ORM | SQLAlchemy |
 | Authentication | JWT, Password Hashing |
+| Image Storage | Cloudinary |
 | API Testing | FastAPI Swagger UI |
 | Containerization | Docker, Docker Compose |
-| Version Control | Git and GitHub |
+| Backend Deployment | Vercel |
+| Frontend Deployment | Netlify |
+| Version Control | Git, GitHub |
+
+## Application Architecture
+
+The application is divided into frontend, backend, database, and image-storage components.
+
+1. **Frontend – Netlify:** Hosts the user interface built with HTML, CSS, Bootstrap, and JavaScript.
+2. **Backend – Vercel:** Hosts the FastAPI application, which handles authentication, API requests, and pin-related operations.
+3. **Database – Neon PostgreSQL:** Stores user information, pins, and saved-pin records.
+4. **Image Storage – Cloudinary:** Stores uploaded images and provides image URLs that are saved with pin records.
+
+### Architecture Overview
+
+```text
+             User / Browser
+                    |
+                    v
+          Netlify - Frontend
+                    |
+             REST API Requests
+                    |
+                    v
+          Vercel - FastAPI
+             /          \
+            /            \
+           v              v
+   Neon PostgreSQL     Cloudinary
+   (Application Data)  (Image Storage)
+```
 
 ## Project Structure
 
@@ -66,114 +102,122 @@ pinterest-clone/
 └── README.md
 ```
 
-## How the Application Works
-
-I divided the application into three main parts:
-
-1. **Frontend:** This is where users interact with the application. It handles the interface, forms, navigation, and displaying pins.
-2. **Backend:** FastAPI handles requests from the frontend, user authentication, image uploads, and pin-related operations.
-3. **Database:** PostgreSQL stores user information, pin details, and saved-pin records.
-
-SQLAlchemy is used to communicate with the PostgreSQL database.
-
-## Running the Project with Docker
-
-I used Docker Compose to run the frontend, backend, and database together instead of setting up and running each service separately.
-
-### Requirements
-
-- Docker Engine
-- Docker Compose
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/shanzay-arshad/pinterest-clone.git
-cd pinterest-clone
-```
-
-### 2. Configure environment variables
-
-Create your backend environment file using the example:
-
-```bash
-cp backend/.env.example backend/.env
-```
-
-Open `backend/.env` and configure the required database credentials and application settings.
-
-Keep this file private. It should never be uploaded to GitHub.
-
-### 3. Build and start the containers
-
-```bash
-docker compose --env-file backend/.env up --build -d
-```
-
-This builds the images and starts the three services.
-
-### 4. Create the database tables
-
-Run this command the first time you set up the project:
-
-```bash
-docker compose --env-file backend/.env exec backend python -m app.create_db
-```
-
-### 5. Open the application
-
-- Frontend: http://localhost:5500
-- Backend API: http://localhost:8000
-- Swagger API Documentation: http://localhost:8000/docs
-
-### 6. Stop the application
-
-```bash
-docker compose --env-file backend/.env down
-```
-
-Docker volumes are used to preserve database records and uploaded images when containers are removed and recreated. Avoid using `docker compose down -v` if you want to keep this data.
-
 ## API Endpoints
 
-Some of the main API endpoints implemented in the project are:
+The following are some of the main API endpoints implemented in the project.
 
 | Method | Endpoint | Purpose |
 |---|---|---|
 | POST | `/users/register` | Register a new user |
-| POST | `/users/login` | Log in |
-| GET | `/users/me` | Get current user information |
-| GET | `/users/me/pins` | Get pins uploaded by the current user |
+| POST | `/users/login` | Authenticate a user |
+| GET | `/users/me` | Retrieve current user information |
+| GET | `/users/me/pins` | Retrieve pins uploaded by the current user |
 | GET | `/pins/` | Retrieve the Explore feed |
 | POST | `/pins/` | Upload a new pin |
 | GET | `/saved-pins/me` | Retrieve saved pins |
 | POST | `/saved-pins/{pin_id}` | Save a pin |
 | DELETE | `/saved-pins/{pin_id}` | Unsave a pin |
 
+For the complete API documentation, visit the [Live Swagger UI](https://pinterest-backend-orpin.vercel.app/docs).
+
+## Running the Project Locally
+
+The project can also be run locally using Docker Compose.
+
+### Requirements
+
+- Git
+- Docker Engine
+- Docker Compose
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/shanzay-arshad/pinterest-clone.git
+cd pinterest-clone
+```
+
+### 2. Configure Environment Variables
+
+Create your backend environment file from the example:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Configure the required environment variables in `backend/.env`, including your database connection and Cloudinary credentials.
+
+Keep your actual `.env` file private. Never commit passwords, API secrets, or other credentials to GitHub.
+
+### 3. Build and Start the Containers
+
+```bash
+docker compose --env-file backend/.env up --build -d
+```
+
+### 4. Create Database Tables
+
+```bash
+docker compose --env-file backend/.env exec backend python -m app.create_db
+```
+
+### 5. Access the Application
+
+| Service | Local URL |
+|---|---|
+| Frontend | http://localhost:5500 |
+| Backend API | http://localhost:8000 |
+| Swagger Documentation | http://localhost:8000/docs |
+
+### 6. Stop the Containers
+
+```bash
+docker compose --env-file backend/.env down
+```
+
+## Deployment
+
+The application is deployed using the following services:
+
+- **Netlify:** Frontend hosting and deployment from GitHub.
+- **Vercel:** FastAPI backend hosting.
+- **Neon:** Cloud-hosted PostgreSQL database.
+- **Cloudinary:** Cloud image storage.
+
+The frontend communicates with the deployed backend through REST API requests. The backend interacts with Neon for application data and Cloudinary for image uploads.
+
+Environment variables are configured separately in the deployment platforms to keep credentials out of the source code.
+
 ## What I Learned
 
-Working on this project helped me understand how different parts of a full-stack application connect with each other.
+Building this project helped me gain practical experience with:
 
-Some of the things I learned and practised include:
-
-- Connecting a frontend with a FastAPI backend.
-- Creating and testing REST APIs.
+- Developing a frontend using HTML, CSS, Bootstrap, and JavaScript.
+- Connecting a frontend to a backend through REST APIs.
+- Building backend endpoints using FastAPI.
+- Implementing authentication using JWT and password hashing.
 - Working with PostgreSQL and SQLAlchemy.
-- Implementing user authentication using JWT.
-- Handling image uploads and storing files.
-- Managing application services using Docker Compose.
-- Using Docker volumes to preserve application data.
-- Managing project changes using Git and GitHub.
+- Handling image uploads and integrating Cloudinary.
+- Using Docker and Docker Compose for local development.
+- Managing environment variables and application configuration.
+- Deploying a frontend and backend separately.
+- Connecting cloud-hosted services to build a working full-stack application.
+- Using Git and GitHub for version control.
 
 ## Future Improvements
 
-There are still some features I would like to explore and add:
+Some features I would like to explore and implement in future versions include:
 
 - Like and unlike functionality.
 - Boards for organizing saved pins.
 - Search and filtering.
 - Individual pin detail pages.
-- Integration with Amazon S3 for image storage.
-- Improved deployment and scaling.
+- Improved image optimization and pagination.
+- Additional security and performance improvements.
 
-This project is still a learning experience, and I plan to keep improving it as I learn more about full-stack development.
+## Author
+
+**Shanzay Arshad Malik**
+
+- GitHub: https://github.com/shanzay-arshad
+- LinkedIn: https://www.linkedin.com/in/shanzay-arshad-malik-b165932b7/
