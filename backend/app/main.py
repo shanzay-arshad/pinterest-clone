@@ -1,4 +1,5 @@
 
+import os
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -28,16 +29,16 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# Image storage directory
-UPLOAD_DIR = Path(__file__).resolve().parent.parent / "uploads"
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+# Local image storage (not needed on Vercel)
+if not os.getenv("VERCEL"):
+    UPLOAD_DIR = Path(__file__).resolve().parent.parent / "uploads"
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-# Serve uploaded images
-app.mount(
-    "/uploads",
-    StaticFiles(directory=UPLOAD_DIR),
-    name="uploads"
-)
+    app.mount(
+        "/uploads",
+        StaticFiles(directory=UPLOAD_DIR),
+        name="uploads"
+    )
 
 
 @app.get("/")
