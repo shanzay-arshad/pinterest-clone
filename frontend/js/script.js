@@ -342,7 +342,9 @@ async function loadPins(view = "explore") {
             imageWrapper.className = "pin-image-wrapper";
 
             const image = document.createElement("img");
-            image.src = `${API_URL}${pin.image_url}`;
+            image.src = pin.image_url.startsWith("http")
+            ? pin.image_url
+            : `${API_URL}${pin.image_url}`;
             image.alt = pin.title;
             image.loading = "lazy";
 
@@ -497,7 +499,9 @@ async function loadProfile() {
             card.className = "pin-card";
 
             const image = document.createElement("img");
-            image.src = `${API_URL}${pin.image_url}`;
+            image.src = pin.image_url.startsWith("http")
+            ? pin.image_url
+            : `${API_URL}${pin.image_url}`;
             image.alt = pin.title;
             image.loading = "lazy";
 

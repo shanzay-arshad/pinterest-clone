@@ -1,6 +1,12 @@
 
+import os
+
+import cloudinary
+import cloudinary.uploader
+
+from dotenv import load_dotenv
+
 from pathlib import Path
-from uuid import uuid4
 
 from fastapi import (
     APIRouter,
@@ -19,18 +25,26 @@ from app.dependencies import get_current_user
 from app.models.pin import Pin
 from app.models.user import User
 from app.schemas.pin import PinResponse
-from fastapi import APIRouter, Depends
+
+
+# Load environment variables from backend/.env
+BASE_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(BASE_DIR / ".env")
+
+
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
 
 router = APIRouter(
     prefix="/pins",
     tags=["Pins"]
 )
-
-# Location where uploaded images will be stored
-UPLOAD_DIR = Path(__file__).resolve().parents[2] / "uploads"
-
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
 @router.post("/", response_model=PinResponse, status_code=status.HTTP_201_CREATED)
@@ -44,9 +58,9 @@ def create_pin(
 
     # Allow only common image formats
     allowed_types = {
-        "image/jpeg": ".jpg",
-        "image/png": ".png",
-        "image/webp": ".webp"
+        "image/jpeg",
+        "image/png",
+        "image/webp"
     }
 
     if image.content_type not in allowed_types:
@@ -54,12 +68,6 @@ def create_pin(
             status_code=400,
             detail="Only JPG, PNG, and WEBP images are allowed"
         )
-
-    # Generate a unique filename
-    extension = allowed_types[image.content_type]
-    filename = f"{uuid4().hex}{extension}"
-
-    file_path = UPLOAD_DIR / filename
 
     # Read the image and limit its size to 5 MB
     image_data = image.file.read(5 * 1024 * 1024 + 1)
@@ -70,15 +78,39 @@ def create_pin(
             detail="Image size must be 5 MB or less"
         )
 
-    # Save image locally
-    with open(file_path, "wb") as file:
-        file.write(image_data)
+    # Check that Cloudinary credentials are configured
+    if not all([
+        os.getenv("CLOUDINARY_CLOUD_NAME"),
+        os.getenv("CLOUDINARY_API_KEY"),
+        os.getenv("CLOUDINARY_API_SECRET")
+    ]):
+        raise HTTPException(
+            status_code=500,
+            detail="Cloudinary configuration is missing"
+        )
+
+    # Upload image to Cloudinary
+    try:
+        upload_result = cloudinary.uploader.upload(
+            image_data,
+            folder="pinterest-clone",
+            resource_type="image"
+        )
+
+        image_url = upload_result["secure_url"]
+        public_id = upload_result["public_id"]
+
+    except Exception:
+        raise HTTPException(
+            status_code=502,
+            detail="Image upload to Cloudinary failed"
+        )
 
     # Save image information in PostgreSQL
     new_pin = Pin(
         title=title,
         description=description or None,
-        image_url=f"/uploads/{filename}",
+        image_url=image_url,
         owner_id=current_user.id
     )
 
@@ -89,7 +121,16 @@ def create_pin(
 
     except Exception:
         db.rollback()
-        file_path.unlink(missing_ok=True)
+
+        # Remove uploaded image if database saving fails
+        try:
+            cloudinary.uploader.destroy(
+                public_id,
+                resource_type="image"
+            )
+        except Exception:
+            pass
+
         raise HTTPException(
             status_code=500,
             detail="Could not create pin"
@@ -109,6 +150,7 @@ def get_all_pins(
     )
 
     return pins
+
 
 @router.get("/me", response_model=list[PinResponse])
 def get_my_pins(
