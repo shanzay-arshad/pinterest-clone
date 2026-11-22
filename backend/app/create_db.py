@@ -1,5 +1,9 @@
+
 from app.database import Base, engine
+
 from app.models import User, Pin
+from app.models.saved_pin import SavedPin
+
 
 # Create all registered database tables
 Base.metadata.create_all(bind=engine)

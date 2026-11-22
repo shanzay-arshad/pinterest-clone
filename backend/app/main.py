@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.users import router as users_router
 from app.routes.pins import router as pins_router
+from app.routes import saved_pins
 
 
 app = FastAPI(
@@ -51,3 +52,4 @@ def health_check():
 
 app.include_router(users_router)
 app.include_router(pins_router)
+app.include_router(saved_pins.router)

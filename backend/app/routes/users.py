@@ -1,4 +1,4 @@
-
+from app.models.pin import Pin
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pwdlib import PasswordHash
@@ -129,3 +129,20 @@ def get_my_profile(
 
     return current_user
 
+# -------------------------------
+# GET CURRENT USER'S UPLOADED PINS
+# -------------------------------
+
+@router.get("/me/pins")
+def get_my_pins(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+
+    my_pins = db.query(Pin).filter(
+        Pin.owner_id == current_user.id
+    ).order_by(
+        Pin.created_at.desc()
+    ).all()
+
+    return my_pins

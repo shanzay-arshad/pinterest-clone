@@ -13,7 +13,7 @@
         rel="stylesheet"
     >
 
-    <!-- Our custom CSS -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -39,11 +39,33 @@
 
             <div class="collapse navbar-collapse" id="navbarContent">
 
-                <ul class="navbar-nav me-3">
-                    <li class="nav-item">
-                        <a class="nav-link active fw-semibold" href="#">Explore</a>
-                    </li>
-                </ul>
+                
+<ul class="navbar-nav me-3">
+    <li class="nav-item">
+        <a class="nav-link active fw-semibold"
+           href="#"
+           id="exploreNavBtn">
+            Explore
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link fw-semibold"
+           href="#"
+           id="savedNavBtn">
+            Saved
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link fw-semibold"
+           href="#"
+           id="profileNavBtn">
+            Profile
+        </a>
+    </li>
+</ul>
+
 
                 <!-- Search Bar -->
                 <form class="search-form flex-grow-1" id="searchForm">
@@ -55,30 +77,61 @@
                     >
                 </form>
 
-                <button class="btn btn-dark ms-lg-3 mt-3 mt-lg-0" id="uploadBtn">
-                    + Upload
-                </button>
+                <!-- Authentication Buttons -->
+                <div class="d-flex gap-2 align-items-center ms-lg-3 mt-3 mt-lg-0">
+
+                    <button
+                        class="btn btn-outline-dark"
+                        id="loginNavBtn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#loginModal"
+                    >
+                        Login
+                    </button>
+
+                    <button
+                        class="btn btn-danger"
+                        id="signupNavBtn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#signupModal"
+                    >
+                        Sign Up
+                    </button>
+
+                    <span id="userStatus" class="fw-semibold d-none"></span>
+
+                    <button
+                        class="btn btn-outline-dark d-none"
+                        id="logoutBtn"
+                    >
+                        Logout
+                    </button>
+
+                    <button class="btn btn-dark" id="uploadBtn">
+                        + Upload
+                    </button>
+
+                </div>
 
             </div>
         </div>
     </nav>
+
 
     <!-- Main Content -->
     <main class="container-fluid px-4 py-4">
 
         <section class="text-center mb-4">
             <h1 class="fw-bold">Find your next idea</h1>
+
             <p class="text-muted">
                 Discover inspiration for your next project, style, or adventure.
             </p>
         </section>
 
-       
         <!-- Image Feed -->
-<section class="pin-grid" id="pinGrid">
-
-    <!-- Pins will be loaded dynamically from FastAPI -->
-
+        <section class="pin-grid" id="pinGrid">
+            <!-- Pins will be loaded dynamically from FastAPI -->
         </section>
 
         <p id="loadingMessage" class="text-center text-muted mt-4">
@@ -88,20 +141,255 @@
         <p id="noResults" class="text-center text-muted mt-4 d-none">
             No matching ideas found.
         </p>
-        
 
-        <p id="noResults" class="text-center text-muted mt-4 d-none">
-            No matching ideas found.
+         <!-- USER PROFILE SECTION GOES HERE -->
+    <section id="profileSection" class="container my-4 d-none">
+
+        <div class="text-center mb-4">
+            <div class="mb-3">
+                <i class="bi bi-person-circle"
+                   style="font-size: 70px;"></i>
+            </div>
+
+            <h2 id="profileUsername">Username</h2>
+
+            <p id="profileEmail" class="text-muted">
+                user@email.com
+            </p>
+
+            <h6 id="profilePinCount">0 Pins</h6>
+        </div>
+
+        <hr>
+
+        <h4 class="mb-4">Created Pins</h4>
+
+        <div id="profilePinGrid" class="pin-grid"></div>
+
+        <p id="profileNoPins" class="text-muted text-center d-none">
+            You haven't uploaded any pins yet.
         </p>
+
+    </section>
 
     </main>
 
-    <!-- Bootstrap JavaScript -->
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-    </script>
 
-    <!-- Our custom JavaScript -->
+    <!-- Signup Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Create your account</h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    ></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="signupForm">
+
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="signupUsername"
+                                minlength="3"
+                                maxlength="50"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="signupEmail"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="signupPassword"
+                                minlength="8"
+                                required
+                            >
+                        </div>
+
+                        <p id="signupMessage" class="small"></p>
+
+                        <button type="submit" class="btn btn-danger w-100">
+                            Create Account
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Welcome Back!</h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    ></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="loginForm">
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="loginEmail"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="loginPassword"
+                                required
+                            >
+                        </div>
+
+                        <p id="loginMessage" class="small"></p>
+
+                        <button type="submit" class="btn btn-dark w-100">
+                            Login
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- Upload Pin Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Create a Pin</h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="uploadForm">
+
+                    <!-- Image selection -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Choose Image
+                        </label>
+
+                        <input
+                            type="file"
+                            class="form-control"
+                            id="uploadImage"
+                            accept="image/jpeg,image/png,image/webp"
+                            required
+                        >
+
+                        <small class="text-muted">
+                            JPG, PNG or WEBP. Maximum 5 MB.
+                        </small>
+                    </div>
+
+                    <!-- Pin title -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Pin Title
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="uploadTitle"
+                            maxlength="150"
+                            placeholder="Enter pin title"
+                            required
+                        >
+                    </div>
+
+                    <!-- Pin description -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Description
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="uploadDescription"
+                            rows="3"
+                            placeholder="Describe your pin..."
+                        ></textarea>
+                    </div>
+
+                    <p id="uploadMessage" class="small"></p>
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger w-100"
+                        id="createPinBtn"
+                    >
+                        Create Pin
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
     <script src="js/script.js"></script>
 
 </body>

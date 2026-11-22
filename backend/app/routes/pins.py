@@ -19,6 +19,7 @@ from app.dependencies import get_current_user
 from app.models.pin import Pin
 from app.models.user import User
 from app.schemas.pin import PinResponse
+from fastapi import APIRouter, Depends
 
 
 router = APIRouter(
@@ -108,3 +109,17 @@ def get_all_pins(
     )
 
     return pins
+
+@router.get("/me", response_model=list[PinResponse])
+def get_my_pins(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    my_pins = (
+        db.query(Pin)
+        .filter(Pin.owner_id == current_user.id)
+        .order_by(Pin.created_at.desc())
+        .all()
+    )
+
+    return my_pins
